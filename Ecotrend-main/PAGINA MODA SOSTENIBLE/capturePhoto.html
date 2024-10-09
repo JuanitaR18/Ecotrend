@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="stylePhotos.css">
+    <title>Captura de Foto</title>
+</head>
+
+<body>
+    <div class="upload-container">
+        <div class="header">
+            <h1>Sube tu Foto</h1>
+            <p>Captura una imagen de tu prenda</p>
+        </div>
+        <div class="camera-section">
+            <video id="video" autoplay></video>
+            <button id="capture-btn" class="capture-btn">Capturar Foto</button>
+            <canvas id="canvas"></canvas>
+        </div>
+        <div class="preview-section">
+            <h2>Vista Previa</h2>
+            <img id="captured-image" alt="Vista previa de la imagen capturada">
+        </div>
+        <form class="upload-form">
+            <input type="file" id="fileInput" accept="image/*">
+            <label for="fileInput" class="upload-btn">Subir Imagen</label>
+        </form>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureBtn = document.getElementById('capture-btn');
+        const capturedImage = document.getElementById('captured-image');
+
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+                video.addEventListener('loadedmetadata', () => {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                });
+            })
+            .catch(error => {
+                console.error('Error accediendo a la cámara:', error);
+            });
+
+
+        captureBtn.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            capturedImage.src = canvas.toDataURL('image/png');
+            capturedImage.style.display = 'block';
+            canvas.style.display = 'none';
+        });
+    </script>
+</body>
+
+</html>
